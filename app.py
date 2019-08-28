@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Follows
 
 CURR_USER_KEY = "curr_user"
 
@@ -51,6 +51,21 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+
+# def check_db_for_unique(field_name, value):
+#     """ check if item passed in is in database """
+#     if (field_name == "email"):
+#         item_in_db = User.query.filter_by(email=value).first()
+#         if item_in_db:
+#             return True
+#         else:
+#             return False
+#     elif field_name == 'username':
+#         item_in_db = User.query.get(value)
+#         if item_in_db:
+#             return True
+#         return False
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -244,8 +259,7 @@ def profile():
             auth_user.email = email
             auth_user.bio = bio
             auth_user.location = location
-            if not auth_user.image:
-                auth_user.image = image
+            auth_user.image = image
             auth_user.header_image = header_image
 
             db.session.add(auth_user)
@@ -332,10 +346,15 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
-
     if g.user:
+        following_ids = [user.id for user in g.user.following]
+
         messages = (Message
                     .query
+                    .filter(db.or_(
+                        Message.user_id.in_(following_ids),
+                        Message.user_id == g.user.id
+                    ))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
