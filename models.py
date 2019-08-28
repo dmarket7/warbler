@@ -76,6 +76,13 @@ class User(db.Model):
 
     messages = db.relationship('Message')
 
+    likes = db.relationship(
+        "Message",
+        secondary="likes",
+        primaryjoin=(Like.user_id == id),
+        backref="users"
+    )
+
     followers = db.relationship(
         "User",
         secondary="follows",
@@ -173,6 +180,25 @@ class Message(db.Model):
     )
 
     user = db.relationship('User')
+
+class Like(db.Model):
+    """Keeps track of users that like a warble."""
+
+    __tablename__ = 'likes'
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False,
+        primary_key=True
+    )
+
+    msg_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id', ondelete='CASCADE'),
+        nullable=False,
+        primary_key=True
+    )
 
 
 def connect_db(app):

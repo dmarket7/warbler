@@ -29,6 +29,9 @@
       {% endif %}
       {{ form.password(placeholder="Enter your password to confirm", class="form-control") }}
 
+      {% for category, message in get_flashed_messages(with_categories=["user-edit"]) %}
+        <div class="alert alert-danger">{{ message }}</div>
+      {% endfor %}
       <div class="edit-btn-area">
         <button class="btn btn-success">Edit this user!</button>
         <a href="/users/{{ user_id }}" class="btn btn-outline-secondary">Cancel</a>

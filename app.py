@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Follows, Like
 
 CURR_USER_KEY = "curr_user"
 
@@ -266,6 +266,9 @@ def profile():
             db.session.commit()
 
             return redirect(f'/users/{auth_user.id}')
+        else:
+            flash("Invalid password", category='user-edit')
+            return redirect('/users/profile')
 
     return render_template('users/edit.html', form=form, user=user)
 
@@ -333,6 +336,16 @@ def messages_destroy(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+@app.route('/likes/<int:message_id>', methods=["POST"])
+def messages_show(message_id):
+    """Like a message."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    like = Like(user_id=g.user.id, msg_id=message_id)
 
 
 ##############################################################################
