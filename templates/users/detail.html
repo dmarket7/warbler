@@ -2,7 +2,9 @@
 
 {% block content %}
 
-<div id="warbler-hero" class="full-width"></div>
+<div id="warbler-hero" class="full-width">
+  <img class="profile-header" src="{{ user.header_image_url }}" alt="Cover Image for {{ user.username }}">
+</div>
 <img src="{{ user.image_url }}" alt="Image for {{ user.username }}" id="profile-avatar">
 <div class="row full-width">
   <div class="container">
@@ -58,8 +60,8 @@
 <div class="row">
   <div class="col-sm-3">
     <h4 id="sidebar-username">@{{ user.username }}</h4>
-    <p>BIO HERE</p>
-    <p class="user-location"><span class="fa fa-map-marker"></span>LOCATION HERE</p>
+    <p>{{ user.bio }}</p>
+    <p class="user-location"><span class="fa fa-map-marker"></span>{{ user.location }}</p>
   </div>
 
   {% block user_details %}

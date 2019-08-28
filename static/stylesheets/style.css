@@ -158,6 +158,10 @@ nav + .container {
   margin-top: 100px;
 }
 
+.profile-header {
+  height: 360px;
+}
+
 #profile-image,
 #profile-avatar {
   border-radius: 100%;
@@ -381,6 +385,10 @@ nav + .container {
 
 p.card-bio {
   margin: 2em 10px 0;
+}
+
+p.card-location {
+  margin: 1em 10px;
 }
 
 /* ============================ Signed out home */
