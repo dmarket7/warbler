@@ -8,6 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+DEFAULT_USER_IMAGE = "/static/images/default-pic.png"
+DEFAULT_HEADER_IMAGE = "/static/images/warbler-hero.jpg"
 
 class Follows(db.Model):
     """Connection of a follower <-> followed_user."""
@@ -51,12 +53,12 @@ class User(db.Model):
 
     image_url = db.Column(
         db.Text,
-        default="/static/images/default-pic.png",
+        default = DEFAULT_USER_IMAGE
     )
 
     header_image_url = db.Column(
         db.Text,
-        default="/static/images/warbler-hero.jpg"
+        default = DEFAULT_HEADER_IMAGE
     )
 
     bio = db.Column(

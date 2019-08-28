@@ -159,7 +159,10 @@ nav + .container {
 }
 
 .profile-header {
-  height: 360px;
+  position: absolute;
+  /* height: 100%; */
+  background-size: cover;
+  background-position: center center;
 }
 
 #profile-image,
@@ -205,7 +208,9 @@ nav + .container {
   margin-top: -16px;
   opacity: 0.7;
   background-size: cover;
-  background-position: top center;
+  background-position: center center;
+  position: relative;
+  overflow: hidden;
 }
 
 .full-width {
