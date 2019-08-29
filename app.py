@@ -337,8 +337,9 @@ def messages_destroy(message_id):
 
     return redirect(f"/users/{g.user.id}")
 
+
 @app.route('/likes/<int:message_id>', methods=["POST"])
-def messages_show(message_id):
+def like_message(message_id):
     """Like a message."""
 
     if not g.user:
@@ -346,6 +347,10 @@ def messages_show(message_id):
         return redirect("/")
 
     like = Like(user_id=g.user.id, msg_id=message_id)
+    db.session.add(like)
+    db.session.commit()
+
+    return render_template('/users/likes.html', user=g.user)
 
 
 ##############################################################################

@@ -79,8 +79,7 @@ class User(db.Model):
     likes = db.relationship(
         "Message",
         secondary="likes",
-        primaryjoin=(Like.user_id == id),
-        backref="users"
+        backref="users_who_like"
     )
 
     followers = db.relationship(
@@ -180,6 +179,7 @@ class Message(db.Model):
     )
 
     user = db.relationship('User')
+
 
 class Like(db.Model):
     """Keeps track of users that like a warble."""
