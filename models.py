@@ -74,7 +74,7 @@ class User(db.Model):
         nullable=False,
     )
 
-    messages = db.relationship('Message')
+    messages = db.relationship('Message', cascade="all, delete-orphan")
 
     likes = db.relationship(
         "Message",
@@ -174,7 +174,7 @@ class Message(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete='CASCADE'),
+        db.ForeignKey('users.id'),
         nullable=False,
     )
 
@@ -188,14 +188,14 @@ class Like(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id'),
+        db.ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
         primary_key=True
     )
 
     msg_id = db.Column(
         db.Integer,
-        db.ForeignKey('messages.id'),
+        db.ForeignKey('messages.id', ondelete='CASCADE'),
         nullable=False,
         primary_key=True
     )

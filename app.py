@@ -192,6 +192,7 @@ def users_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
+    
     return render_template('users/followers.html', user=user)
 
 
@@ -207,7 +208,7 @@ def add_follow(follow_id):
     g.user.following.append(followed_user)
     db.session.commit()
 
-    return redirect(f"/users/{g.user.id}/following")
+    return redirect(request.referrer)
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
@@ -222,7 +223,20 @@ def stop_following(follow_id):
     g.user.following.remove(followed_user)
     db.session.commit()
 
-    return redirect(f"/users/{g.user.id}/following")
+    return redirect(request.referrer)
+
+
+# Route for displaying liked posts
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    user = User.query.get_or_404(user_id)
+    user_likes = [msg.id for msg in user.likes]
+
+    return render_template('users/likes.html', user=user, user_likes=user_likes)
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
@@ -364,6 +378,9 @@ def like_message(message_id):
         return redirect("/")
 
     try:
+        cur_message = Message.query.get(message_id)
+        if cur_message.user_id == g.user.id:
+            return redirect(request.referrer)
         like = Like(msg_id=message_id, user_id=g.user.id)
         db.session.add(like)
         db.session.commit()
