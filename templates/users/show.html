@@ -1,6 +1,6 @@
 {% extends 'users/detail.html' %}
 {% block user_details %}
-  <div class="col-sm-6">
+  <div class="col-sm-8">
     <h1 class="my-3">My Profile Page</h1>
     <ul class="list-group" id="messages">
 
@@ -18,6 +18,15 @@
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
             <p>{{ message.text }}</p>
           </div>
+          {% if message.id in user_likes %}
+          <form action="/likes/{{ message.id }}" method="POST" id="like-form">
+            <button class="fas fa-heart mr-0" type="submit" id="like-button"></button>
+          </form>
+          {% else %}
+          <form action="/likes/{{ message.id }}" method="POST" id="like-form">
+            <button class="far fa-heart mr-0" type="submit" id="like-button"></button>
+          </form>
+          {% endif %}
         </li>
 
       {% endfor %}

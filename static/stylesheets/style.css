@@ -399,9 +399,11 @@ p.card-location {
 /* Like button styling */
 #like-button {
   border: None;
-  padding: 0;
+  padding: 1em;
   background: None;
-  /* position: absolute */
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 #like-form {

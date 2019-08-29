@@ -49,7 +49,7 @@
           <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
           <p>{{ msg.text }}</p>
         </div>
-        {% if msg.user.likes %}
+        {% if msg.id in user_likes %}
         <form action="/likes/{{ msg.id }}" method="POST" id="like-form">
           <button class="fas fa-heart mr-0" type="submit" id="like-button"></button>
         </form>

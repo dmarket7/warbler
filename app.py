@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
 from models import db, connect_db, User, Message, Follows, Like
@@ -167,7 +167,8 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
-    return render_template('users/show.html', user=user, messages=messages)
+    g_likes = [msg.id for msg in g.user.likes]
+    return render_template('users/show.html', user=user, messages=messages, user_likes=g_likes)
 
 
 @app.route('/users/<int:user_id>/following')
@@ -341,17 +342,25 @@ def messages_destroy(message_id):
 @app.route('/likes/<int:message_id>', methods=["POST"])
 def like_message(message_id):
     """Like a message."""
-
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    like = Like(user_id=g.user.id, msg_id=message_id)
-    db.session.add(like)
-    db.session.commit()
+    try:
+        like = Like(msg_id=message_id, user_id=g.user.id)
+        db.session.add(like)
+        db.session.commit()
+        g_likes = [msg.id for msg in g.user.likes]
+        return redirect(request.referrer)
 
-    return render_template('/users/likes.html', user=g.user)
+    except (IntegrityError, InvalidRequestError):
+        db.session.rollback()
+        liked_msg = Like.query.get_or_404((g.user.id, message_id))
+        db.session.delete(liked_msg)
+        db.session.commit()
+        g_likes = [msg.id for msg in g.user.likes]
 
+        return redirect(request.referrer)
 
 ##############################################################################
 # Homepage and error pages
@@ -376,10 +385,9 @@ def homepage():
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-        users = [m.user for m in messages]
-        likes = Like.query.all()
-        import pdb; pdb.set_trace()
-        return render_template('home.html', messages=messages, users=users)
+        # users = [m.user for m in messages]
+        g_likes = [msg.id for msg in g.user.likes]
+        return render_template('home.html', messages=messages, user_likes=g_likes)
 
     else:
         return render_template('home-anon.html')

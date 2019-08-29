@@ -188,14 +188,14 @@ class Like(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', ondelete='CASCADE'),
+        db.ForeignKey('users.id'),
         nullable=False,
         primary_key=True
     )
 
     msg_id = db.Column(
         db.Integer,
-        db.ForeignKey('messages.id', ondelete='CASCADE'),
+        db.ForeignKey('messages.id'),
         nullable=False,
         primary_key=True
     )
