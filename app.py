@@ -347,6 +347,8 @@ def messages_show(message_id):
 
     like = Like(user_id=g.user.id, msg_id=message_id)
 
+    # if 
+
 
 ##############################################################################
 # Homepage and error pages
@@ -361,7 +363,6 @@ def homepage():
     """
     if g.user:
         following_ids = [user.id for user in g.user.following]
-
         messages = (Message
                     .query
                     .filter(db.or_(
@@ -372,6 +373,7 @@ def homepage():
                     .limit(100)
                     .all())
 
+        import pdb; pdb.set_trace()
         return render_template('home.html', messages=messages)
 
     else:

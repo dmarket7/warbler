@@ -396,6 +396,21 @@ p.card-location {
   margin: 1em 10px;
 }
 
+
+/* Like button styling */
+
+#like-button {
+  border: None;
+  padding: 0;
+  background: None;
+  /* position: absolute */
+}
+
+#like-form {
+  position: relative;
+  z-index: 10;
+}
+
 /* ============================ Signed out home */
 
 .home-hero {

@@ -79,8 +79,7 @@ class User(db.Model):
     likes = db.relationship(
         "Message",
         secondary="likes",
-        primaryjoin=(Like.user_id == id),
-        backref="users"
+        backref="users_who_like"
     )
 
     followers = db.relationship(
