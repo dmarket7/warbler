@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
@@ -253,20 +253,37 @@ def profile():
             image = None
 
         # Authenticating our user
-        auth_user = User.authenticate(form.username.data,
+        auth_user = User.authenticate(g.user.username,
                                       form.password.data)
         if auth_user:
-            auth_user.username = username
-            auth_user.email = email
-            auth_user.bio = bio
-            auth_user.location = location
-            auth_user.image = image
-            auth_user.header_image = header_image
+            try:
+                auth_user.username = username
+                auth_user.email = email
+                auth_user.bio = bio
+                auth_user.location = location
+                auth_user.image = image
+                auth_user.header_image = header_image
 
-            db.session.add(auth_user)
-            db.session.commit()
+                db.session.add(auth_user)
+                db.session.commit()
 
-            return redirect(f'/users/{auth_user.id}')
+                return redirect(f'/users/{auth_user.id}')
+
+            except (IntegrityError, InvalidRequestError):
+                db.session.rollback()
+                user_email = User.query.filter(User.email == email).first()
+                user_username = User.query.filter(User.username == username).first()
+                if user_email and user_username and (user_username.username != auth_user.username) and (user_email.email != auth_user.email):
+                    # import pdb; pdb.set_trace()
+                    text = "Email and Username already exist"
+                elif user_email and (user_email.email != auth_user.email):
+                    text = "Email already exists"
+                else:
+                    text = "Username already exists"
+                
+                flash(f"{text}", category='user-edit')
+                return redirect('/users/profile')
+
         else:
             flash("Invalid password", category='user-edit')
             return redirect('/users/profile')
