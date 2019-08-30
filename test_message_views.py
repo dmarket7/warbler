@@ -25,7 +25,7 @@ from app import app, CURR_USER_KEY
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data
 # and create fresh new clean test data
-
+db.drop_all()
 db.create_all()
 
 # Don't have WTForms use CSRF at all, since it's a pain to test
@@ -56,7 +56,7 @@ class MessageViewTestCase(TestCase):
 
         # Since we need to change the session to mimic logging in,
         # we need to use the changing-session trick:
-
+        import pdb; pdb.set_trace()
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
