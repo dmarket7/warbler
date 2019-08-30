@@ -201,6 +201,7 @@ nav+.container {
 
 .message-area {
   margin-left: 10px;
+  margin-right: 15px;
 }
 
 #warbler-hero {
@@ -285,7 +286,7 @@ nav+.container {
 #messages .list-group-item {
   display: flex;
   align-items: flex-start;
-  padding: 7px 20px 12px;
+  padding: 7px 25px 12px;
 }
 
 #messages:not(.no-hover) .list-group-item:hover {
@@ -404,11 +405,18 @@ p.card-location {
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 10;
 }
 
 #like-form {
   /* position: relative; */
-  z-index: 10;
+}
+
+.like-numbers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2em 1.25em;
 }
 
 /* ============================ Signed out home */
@@ -522,7 +530,8 @@ p.card-location {
 }
 
 #messages.no-hover .message-area {
-  width: 100%;
+  width: 95%;
+  margin-right: 5px;
 }
 
 #messages.no-hover .message-heading {
