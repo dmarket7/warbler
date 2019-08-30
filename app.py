@@ -298,7 +298,7 @@ def profile():
                 auth_user.bio = bio
                 auth_user.location = location
                 auth_user.image_url = image
-                auth_user.header_image = header_image
+                auth_user.header_image_url = header_image
 
                 db.session.add(auth_user)
                 db.session.commit()
