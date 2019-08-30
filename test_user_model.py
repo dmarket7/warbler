@@ -41,6 +41,12 @@ class UserModelTestCase(TestCase):
         Follows.query.delete()
         Like.query.delete()
 
+        user = User(
+            email="patrick@star.com",
+            username="patrickstar",
+            password="password"
+        )
+
         self.client = app.test_client()
 
     def test_user_model(self):
