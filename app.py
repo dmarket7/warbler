@@ -36,6 +36,8 @@ login_manager.init_app(app)
 # if not set there, use development local db.
 # app.config['SQLALCHEMY_DATABASE_URI'] = (
     # os.environ.get('postgres://ozibortidvmjrz:11d564c5697d2a82c86fbe8f0c479ac0ba5e3ffa013cd4bef7eca7c4d8f555f9@ec2-54-83-33-14.compute-1.amazonaws.com:5432/dedtj3givh6msh', 'postgres:///warbler'))
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL', 'postgres:///ozibortidvmjrz:11d564c5697d2a82c86fbe8f0c479ac0ba5e3ffa013cd4bef7eca7c4d8f555f9@ec2-54-83-33-14.compute-1.amazonaws.com:5432/dedtj3givh6msh')
 
@@ -295,7 +297,7 @@ def profile():
                 auth_user.email = email
                 auth_user.bio = bio
                 auth_user.location = location
-                auth_user.image = image
+                auth_user.image_url = image
                 auth_user.header_image = header_image
 
                 db.session.add(auth_user)
