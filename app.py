@@ -304,7 +304,7 @@ def profile():
                 db.session.commit()
 
                 return redirect(f'/users/{auth_user.id}')
-
+ 
             except (IntegrityError, InvalidRequestError):
                 db.session.rollback()
                 user_email = User.query.filter(User.email == email).first()
