@@ -21,10 +21,14 @@
           {% if message.id in user_likes %}
           <form action="/likes/{{ message.id }}" method="POST" id="like-form">
             <button class="fas fa-heart mr-0" type="submit" id="like-button"></button>
+            <br>
+            <span><p>{{ message.users_who_like | length }}</p></span>
           </form>
           {% else %}
           <form action="/likes/{{ message.id }}" method="POST" id="like-form">
             <button class="far fa-heart mr-0" type="submit" id="like-button"></button>
+            <br>
+            <span><p>{{ message.users_who_like | length }}</p></span>
           </form>
           {% endif %}
         </li>

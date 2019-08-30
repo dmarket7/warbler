@@ -1,15 +1,36 @@
 import os
 
 from flask import Flask, render_template, request, flash, redirect, session, g
+# from flask_admin import Admin
+# from flask_basicauth import BasicAuth
+from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
-from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
+from forms import MessageForm, UserAddForm, EditUserForm, LoginForm
 from models import db, connect_db, User, Message, Follows, Like
+
 
 CURR_USER_KEY = "curr_user"
 
+
 app = Flask(__name__)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# Implement Flask-Admin
+# basic_auth = BasicAuth(app)
+
+# app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+# app.config['BASIC_AUTH_USERNAME'] = 'patrickstar'
+# app.config['BASIC_AUTH_PASSWORD'] = 'password'
+# app.config['BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD'] = True
+
+# admin = Admin(app, name='warbler', template_mode='bootstrap3')
+# Add administrative views here
+
+# app.run()
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
@@ -52,21 +73,17 @@ def do_logout():
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
-
-# def check_db_for_unique(field_name, value):
-#     """ check if item passed in is in database """
-#     if (field_name == "email"):
-#         item_in_db = User.query.filter_by(email=value).first()
-#         if item_in_db:
-#             return True
-#         else:
-#             return False
-#     elif field_name == 'username':
-#         item_in_db = User.query.get(value)
-#         if item_in_db:
-#             return True
-#         return False
-
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+# @app.route('/admin')
+# @basic_auth.required
+# def secret_view():
+#     basic_auth.init_app()
+#     if basic_auth.check_credentials(g.user.username, g.user.password):
+#         return render_template('admin/master.html')
+#     else:
+#         return "Not authorized!"    
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -109,7 +126,6 @@ def login():
     """Handle user login."""
 
     form = LoginForm()
-
     if form.validate_on_submit():
         user = User.authenticate(form.username.data,
                                  form.password.data)
@@ -167,7 +183,9 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
+
     g_likes = [msg.id for msg in g.user.likes]
+    # import pdb; pdb.set_trace()
     return render_template('users/show.html', user=user, messages=messages, user_likes=g_likes)
 
 

@@ -1,3 +1,4 @@
+from app import app, CURR_USER_KEY
 """User model tests."""
 
 # run these tests like:
@@ -19,7 +20,6 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
 
 
 # Now we can import app
-from app import app, CURR_USER_KEY
 
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data
@@ -30,6 +30,7 @@ db.create_all()
 
 app.config['WTF_CSRF_ENABLED'] = False
 
+
 class UserViewTestCase(TestCase):
     """Test views for Users"""
 
@@ -38,7 +39,7 @@ class UserViewTestCase(TestCase):
 
         User.query.delete()
         Message.query.delete()
-        
+
         self.client = app.test_client()
 
         self.testuser = User.signup(username="username",
@@ -47,25 +48,59 @@ class UserViewTestCase(TestCase):
                                     image_url=None)
         db.session.commit()
 
-
     def test_create_user(self):
         """Can we add a user?"""
 
         self.client = app.test_client()
-        # import pdb; pdb.set_trace()        
+        # import pdb; pdb.set_trace()
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
 
             resp = c.post("/signup", data={"username": "patrickstar",
-                                            "email": "patrickstar@email.com",
-                                            "password": "password",
-                                            "image_url": None
-                                            })   
+                                           "email": "patrickstar@email.com",
+                                           "password": "password",
+                                           "image_url": None
+                                           })
 
             self.assertEqual(resp.status_code, 302)
 
             user = User.query.filter_by(username="patrickstar").first()
 
             self.assertEqual(user.username, "patrickstar")
-            
+
+    def test_user_auth(self):
+        """Test that user authentication works"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            resp = c.post('/login', data={"username": "username",
+                                          "password": "password",
+                                          }, follow_redirects=True)
+
+            self.assertEqual(resp.status_code, 200)
+            html = resp.get_data(as_text=True)
+            self.assertIn('<p>@username</p>', html)
+
+            resp2 = c.post('/login', data={"username": "doesnotexist",
+                                           "password": "doesnotexist"
+                                           }, follow_redirects=True)
+
+            html2 = resp2.get_data(as_text=True)
+            self.assertIn('Welcome back', html2)
+            self.assertEqual(resp.status_code, 200)
+
+    def test_if_following_pages_work(self):
+        """Testing following routes"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            logout_route = c.get('/logout', follow_redirects=True)
+
+            visit_user = c.get('/users/1/following', follow_redirects=True)
+            html = visit_user.get_data(as_text=True)
+
+            self.assertIn("New to Warbler?", html)
+

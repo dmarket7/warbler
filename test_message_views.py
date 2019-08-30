@@ -1,3 +1,4 @@
+from app import app, CURR_USER_KEY
 """Message View tests."""
 
 # run these tests like:
@@ -20,7 +21,6 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
 
 # Now we can import app
 
-from app import app, CURR_USER_KEY
 
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data
@@ -49,6 +49,11 @@ class MessageViewTestCase(TestCase):
                                     password="testuser",
                                     image_url=None)
 
+        self.testuser2 = User.signup(username="user2",
+                                    email="user2@email.com",
+                                    password="password",
+                                    image_url=None)
+
         db.session.commit()
 
     def test_add_message(self):
@@ -56,7 +61,7 @@ class MessageViewTestCase(TestCase):
 
         # Since we need to change the session to mimic logging in,
         # we need to use the changing-session trick:
-        import pdb; pdb.set_trace()
+
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
@@ -71,3 +76,18 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
+
+    def test_if_messages_can_submit(self):
+        """Testing messages work"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            visit_user = c.post('/messages/new', data = {
+                                            "text": "Hello",
+                                            "user_id": 2,
+                                        }, follow_redirects=True)
+
+            html = visit_user.get_data(as_text=True)
+
+            self.assertIn("Welcome back.", html)

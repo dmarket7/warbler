@@ -9,8 +9,10 @@ Faker==0.9.1
 Flask==1.0.2
 Flask-Bcrypt==0.7.1
 Flask-DebugToolbar==0.10.1
+Flask-Login==0.4.1
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
+gunicorn==19.9.0
 ipython==7.0.1
 ipython-genutils==0.2.0
 itsdangerous==0.24
