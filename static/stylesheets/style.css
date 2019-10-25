@@ -283,6 +283,10 @@ nav+.container {
   z-index: 2;
 }
 
+.likes p {
+  margin-right: 0;
+}
+
 #messages .list-group-item {
   display: flex;
   align-items: flex-start;
