@@ -1,36 +1,44 @@
 {% extends 'users/detail.html' %}
 {% block user_details %}
-  <div class="col-sm-8">
-    <h1 class="my-3">Messages Liked</h1>
-    <ul class="list-group" id="messages">
+<div class="col-sm-8">
+  <h1 class="my-3">Messages Liked</h1>
+  <ul class="list-group" id="messages">
 
-      {% for message in user.likes %}
+    {% for message in user.likes %}
 
-        <li class="list-group-item">
-          <a href="/messages/{{ message.id }}" class="message-link"/>
+    <li class="list-group-item">
+      <a href="/messages/{{ message.id }}" class="message-link" />
 
-          <a href="/users/{{ message.user_id }}">
-            <img src="{{ message.user.image_url }}" alt="user image" class="timeline-image">
-          </a>
+      <a href="/users/{{ message.user_id }}">
+        <img src="{{ message.user.image_url }}" alt="user image" class="timeline-image">
+      </a>
 
-          <div class="message-area">
-            <a href="/users/{{ message.user.id }}">@{{ message.user.username }}</a>
-            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ message.text }}</p>
-          </div>
-          {% if message.id in user_likes %}
-            <form action="/likes/{{ message.id }}" method="POST" id="like-form">
-              <button class="fas fa-heart mr-0" type="submit" id="like-button"></button>
-            </form>
-            {% else %}
-            <form action="/likes/{{ message.id }}" method="POST" id="like-form">
-              <button class="far fa-heart mr-0" type="submit" id="like-button"></button>
-            </form>
-          {% endif %}
-        </li>
+      <div class="message-area">
+        <a href="/users/{{ message.user.id }}">@{{ message.user.username }}</a>
+        <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
+        <p>{{ message.text }}</p>
+      </div>
+      {% if message.id in user_likes %}
+      <form action="/likes/{{ message.id }}" method="POST" id="like-form">
+        <button class="fas fa-heart mr-0" type="submit" id="like-button"></button>
+        <br>
+        <span>
+          <p>{{ message.users_who_like | length }}</p>
+        </span>
+      </form>
+      {% else %}
+      <form action="/likes/{{ message.id }}" method="POST" id="like-form">
+        <button class="far fa-heart mr-0" type="submit" id="like-button"></button>
+        <br>
+        <span class="like-numbers">
+          <p>{{ message.users_who_like | length }}</p>
+        </span>
+      </form>
+      {% endif %}
+    </li>
 
-      {% endfor %}
+    {% endfor %}
 
-    </ul>
-  </div>
+  </ul>
+</div>
 {% endblock %}

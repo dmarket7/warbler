@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 # from flask_admin import Admin
 # from flask_basicauth import BasicAuth
 from flask_login import LoginManager
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
 from forms import MessageForm, UserAddForm, EditUserForm, LoginForm
@@ -16,8 +16,8 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 # Implement Flask-Admin
 # basic_auth = BasicAuth(app)
@@ -44,9 +44,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "nevertell")
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -78,7 +78,7 @@ def do_logout():
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
-@login_manager.user_loader
+# @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
 # @app.route('/admin')
